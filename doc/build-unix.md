@@ -104,6 +104,16 @@ ZMQ dependencies (provides ZMQ API 4.x):
 
     sudo apt-get install libzmq3-dev
 
+Installing libcrypto.so.1.1:
+
+    sudo apt-get install alien
+    wget ftp://rpmfind.net/linux/fedora/linux/development/rawhide/Everything/x86_64/os/Packages/o/openssl-libs-1.1.0f-7.fc27.x86_64.rpm
+    alien openssl-libs-1.1.0f-7.fc27.x86_64.rpm
+    dpkg -i openssl-libs_1.1.0f-8_amd64.deb
+    ln -s /usr/lib64/libcrypto.so.1.1 /usr/lib/libcrypto.so.1.1
+    rm openssl-libs-1.1.0f-7.fc27.x86_64.rpm
+    rm openssl-libs_1.1.0f-8_amd64.deb
+
 Dependencies for the GUI: Ubuntu & Debian
 -----------------------------------------
 
