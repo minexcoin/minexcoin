@@ -65,11 +65,11 @@ TESTS =
 BENCHMARKS =
 
 if BUILD_BITCOIND
-  bin_PROGRAMS += minexcoind
+  bin_PROGRAMS += bitcoind
 endif
 
 if BUILD_BITCOIN_UTILS
-  bin_PROGRAMS += minexcoin-cli minexcoin-tx
+  bin_PROGRAMS += bitcoin-cli bitcoin-tx
 endif
 
 .PHONY: FORCE check-symbols check-security
@@ -98,6 +98,8 @@ BITCOIN_CORE_H = \
   core_memusage.h \
   cuckoocache.h \
   crypto/equihash.h \
+  crypto/equihash.tcc \
+  pow/tromp/equi.h \
   httprpc.h \
   httpserver.h \
   indirectmap.h \
@@ -120,6 +122,7 @@ BITCOIN_CORE_H = \
   policy/rbf.h \
   pow.h \
   pow/tromp/equi_miner.h \
+  pow/tromp/osx_barrier.h \
   protocol.h \
   random.h \
   reverselock.h \

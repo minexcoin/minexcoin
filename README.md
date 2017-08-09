@@ -3,7 +3,7 @@ Minexcoin Core integration/staging tree
 
 https://minexcoin.com
 
-What is Minexcoin? 
+What is Minexcoin?
 ----------------
 
 MinexCoin (MNX) is a global payments system based on a low volatility cryptocurrency
