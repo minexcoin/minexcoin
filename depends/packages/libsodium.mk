@@ -15,19 +15,18 @@ package=libsodium
     define $(package)_set_vars
     	 $(package)_x86_64_cflags=-O3 -fomit-frame-pointer m64 -mtune=westmere
 		 $(package)_i686_cflags=-O3 -fomit-frame-pointer -m32 -march=pentium3 -mtune=westmere
-		 $(package)_darwin_CFLAGS=-arch x86_64 -mmacosx-version-min=${OSX_VERSION_MIN} -march=${OSX_CPU_ARCH} -O2 -g
     endef
 
 
 # Build commands:
 	define $(package)_config_cmds
-	  	./configure  --prefix=$(host_prefix)  --exec-prefix=$(host_prefix) --host=$(host) 
+		$($(package)_autoconf) --enable-static --disable-shared
 	
 endef
 
 	define $(package)_build_cmds
-		make -j 8
-	
+		 $(MAKE)
+
 endef
 
   define $(package)_stage_cmds
