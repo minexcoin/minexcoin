@@ -6,7 +6,7 @@ package=libsodium
 # Identifiers
 
 	$(package)_version=1.0.8
-	$(package)_download_path=https://download.libsodium.org/libsodium/releases/old
+	$(package)_download_path=https://download.libsodium.org/libsodium/releases/old/unsupported
 	$(package)_file_name=$(package)-$($(package)_version).tar.gz
 	$(package)_sha256_hash=c0f191d2527852641e0a996b7b106d2e04cbc76ea50731b2d0babd3409301926
 
