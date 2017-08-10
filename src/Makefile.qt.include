@@ -441,7 +441,7 @@ CLEANFILES += $(CLEAN_QT)
 bitcoin_qt_clean: FORCE
 	rm -f $(CLEAN_QT) $(qt_libbitcoinqt_a_OBJECTS) $(qt_bitcoin_qt_OBJECTS) qt/bitcoin-qt$(EXEEXT) $(LIBBITCOINQT)
 
-bitcoin_qt : qt/minexcoin-qt$(EXEEXT)
+bitcoin_qt : qt/bitcoin-qt$(EXEEXT)
 
 ui_%.h: %.ui
 	@test -f $(UIC)
