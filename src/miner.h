@@ -208,9 +208,6 @@ private:
       * of updated descendants. */
     int UpdatePackagesForAdded(const CTxMemPool::setEntries& alreadyAdded, indexed_modified_transaction_set &mapModifiedTx);
 
-    /** Return emission rate that miner pays to Minex Bank using height of block in blockchain.
-      **/
-    double emissionRate() const;
 };
 
 /** Modify the extranonce in a block */

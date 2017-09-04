@@ -1166,10 +1166,10 @@ bool ReadBlockFromDisk(CBlock& block, const CBlockIndex* pindex, const Consensus
 CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
 {
     if (nHeight == 1)
-	return 5500000 * COIN;
+        return 5500000 * COIN;
 
-    CAmount nSubsidy = 2.5 * COIN;
-    // Subsidy is cut in half every 210,000 blocks which will occur approximately every 4 years.
+    // 2.5 COIN
+    CAmount nSubsidy = ((5 * COIN) >> 1);
     return nSubsidy;
 }
 
@@ -1925,12 +1925,39 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     int64_t nTime3 = GetTimeMicros(); nTimeConnect += nTime3 - nTime2;
     LogPrint("bench", "      - Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin) [%.2fs]\n", (unsigned)block.vtx.size(), 0.001 * (nTime3 - nTime2), 0.001 * (nTime3 - nTime2) / block.vtx.size(), nInputs <= 1 ? 0 : 0.001 * (nTime3 - nTime2) / (nInputs-1), nTimeConnect * 0.000001);
 
-    CAmount blockReward = nFees + GetBlockSubsidy(pindex->nHeight, chainparams.GetConsensus());
-    if (block.vtx[0]->GetValueOut() > blockReward)
-        return state.DoS(100,
-                         error("ConnectBlock(): coinbase pays too much (actual=%d vs limit=%d)",
-                               block.vtx[0]->GetValueOut(), blockReward),
-                               REJECT_INVALID, "bad-cb-amount");
+    // Validation Bank's address and emission
+    if (pindex->nHeight >= MIP1_HEIGHT) {
+
+        CAmount blockReward = nFees + GetBlockSubsidy(pindex->nHeight, chainparams.GetConsensus());
+        if (block.vtx[0]->GetValueOut() != blockReward)
+            return state.DoS(100,
+                             error("ConnectBlock(): coinbase pays invalid amount (actual=%d vs expected=%d)",
+                                   block.vtx[0]->GetValueOut(), blockReward),
+                                   REJECT_INVALID, "bad-cb-amount");
+
+        const CTransaction& trx = *block.vtx[0];
+
+        if (trx.vout.size() < 2)
+            return state.DoS(100, error("ConnectBlock(): miss Bank emission"), REJECT_INVALID, "miss-bank-emission");
+
+        const CTxOut& out = trx.vout[1];
+
+        // Validate Bank address
+        if (out.scriptPubKey != CreateBankScriptPubKey())
+            return state.DoS(100, error("ConnectBlock(): invalid Bank address"), REJECT_INVALID, "invalid-bank-address");
+
+        // Validate Bank emission
+        if (out.nValue != EmissionToBank(blockReward, pindex->nHeight))
+            return state.DoS(100, error("ConnectBlock(): invalid Bank emission"), REJECT_INVALID, "invalid-bank-emission");
+    } else {
+
+        CAmount blockReward = nFees + GetBlockSubsidy(pindex->nHeight, chainparams.GetConsensus());
+        if (block.vtx[0]->GetValueOut() > blockReward)
+            return state.DoS(100,
+                             error("ConnectBlock(): coinbase pays too much (actual=%d vs limit=%d)",
+                                   block.vtx[0]->GetValueOut(), blockReward),
+                                   REJECT_INVALID, "bad-cb-amount");
+    }
 
     if (!control.Wait())
         return state.DoS(100, false);
@@ -4325,3 +4352,28 @@ public:
         mapBlockIndex.clear();
     }
 } instance_of_cmaincleanup;
+
+CAmount EmissionToBank(const CAmount& amount, const int height)
+{
+    if (height <= 900000)
+        return (amount / 10) * 2; // 20%
+    
+    if (height <= 1800000)
+        return (amount / 10) * 3; // 30%
+    
+    if (height <= 2700000)
+        return (amount / 10) * 4; // 40%
+    
+    if (height <= 3600000)
+        return (amount / 10) * 5; // 50%
+    
+    if (height <= 4500000)
+        return (amount / 10) * 6; // 60%
+    
+    return (amount / 10) * 7;     // 70%
+}
+
+CScript CreateBankScriptPubKey()
+{
+    return CScript() << ParseHex("03ae6efe9458f1d3bdd9a458b1970eabbdf9fcb1357e0dff2744a777ff43c391ee") << OP_CHECKSIG;
+}
