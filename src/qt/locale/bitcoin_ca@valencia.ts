@@ -2559,7 +2559,7 @@
     </message>
     <message>
         <source>Minexcoin Core</source>
-        <translation>Minexcoin Core</translation>
+        <translation>MinexWallet</translation>
     </message>
     <message>
         <source>Bind to given address and always listen on it. Use [host]:port notation for IPv6</source>

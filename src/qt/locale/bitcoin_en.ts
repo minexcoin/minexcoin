@@ -3954,7 +3954,7 @@
     <message>
         <location line="-360"/>
         <source>Minexcoin Core</source>
-        <translation type="unfinished">Minexcoin Core</translation>
+        <translation>MinexWallet</translation>
     </message>
     <message>
         <location line="+1"/>

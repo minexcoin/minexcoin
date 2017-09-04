@@ -19,13 +19,13 @@ BEGIN
         BLOCK "040904E4" // U.S. English - multilingual (hex)
         BEGIN
             VALUE "CompanyName",        "Minexcoin"
-            VALUE "FileDescription",    "Minexcoin Core (GUI node for Minexcoin)"
+            VALUE "FileDescription",    "Minexcoin Wallet (GUI node for Minexcoin)"
             VALUE "FileVersion",        VER_FILEVERSION_STR
             VALUE "InternalName",       "minexcoin-qt"
             VALUE "LegalCopyright",     COPYRIGHT_STR
             VALUE "LegalTrademarks1",   "Distributed under the MIT software license, see the accompanying file COPYING or http://www.opensource.org/licenses/mit-license.php."
             VALUE "OriginalFilename",   "minexcoin-qt.exe"
-            VALUE "ProductName",        "Minexcoin Core"
+            VALUE "ProductName",        "Minexcoin Wallet"
             VALUE "ProductVersion",     VER_PRODUCTVERSION_STR
         END
     END
