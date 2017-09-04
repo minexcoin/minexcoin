@@ -114,13 +114,14 @@ UniValue generateBlocks(boost::shared_ptr<CReserveScript> coinbaseScript, int nG
     unsigned int k = Params().EquihashK();
     unsigned int nExtraNonce = 0;
     UniValue blockHashes(UniValue::VARR);
+
+    outer:
     while (nHeight < nHeightEnd)
     {
         std::unique_ptr<CBlockTemplate> pblocktemplate(BlockAssembler(Params()).CreateNewBlock(coinbaseScript->reserveScript));
         if (!pblocktemplate.get())
             throw JSONRPCError(RPC_INTERNAL_ERROR, "Couldn't create new block");
         CBlock *pblock = &pblocktemplate->block;
-
         {
             LOCK(cs_main);
             IncrementExtraNonce(pblock, chainActive.Tip(), nExtraNonce);
@@ -142,6 +143,10 @@ UniValue generateBlocks(boost::shared_ptr<CReserveScript> coinbaseScript, int nG
             // Yes, there is a chance every nonce could fail to satisfy the -regtest
             // target -- 1 in 2^(2^256). That ain't gonna happen
             pblock->nNonce = ArithToUint256(UintToArith256(pblock->nNonce) + 1);
+
+            if (UintToArith256(pblock->nNonce) == nInnerLoopCount) {
+                goto outer;
+            }
 
             // H(I||V||...
             crypto_generichash_blake2b_state curr_state;
