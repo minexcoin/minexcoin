@@ -10,6 +10,8 @@
 #include <QWidget>
 #include <memory>
 
+#include <QNetworkAccessManager>
+
 class ClientModel;
 class TransactionFilterProxy;
 class TxViewDelegate;
@@ -59,12 +61,17 @@ private:
     TxViewDelegate *txdelegate;
     std::unique_ptr<TransactionFilterProxy> filter;
 
+    QTimer *notificationTimer;
+    QNetworkAccessManager *networkVersionAccessor;
+
 private Q_SLOTS:
     void updateDisplayUnit();
     void handleTransactionClicked(const QModelIndex &index);
     void updateAlerts(const QString &warnings);
     void updateWatchOnlyLabels(bool showWatchOnly);
     void handleOutOfSyncWarningClicks();
+    void readNotifications();
+    void finishDownloadVersion(QNetworkReply*);
 };
 
 #endif // BITCOIN_QT_OVERVIEWPAGE_H
