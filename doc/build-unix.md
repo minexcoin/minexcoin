@@ -48,8 +48,9 @@ Optional dependencies:
  libqrencode | QR codes in GUI  | Optional for generating QR codes (only needed when GUI enabled)
  univalue    | Utility          | JSON parsing and encoding (bundled version will be used unless --with-system-univalue passed to configure)
  libzmq3     | ZMQ notification | Optional, allows generating ZMQ notifications (requires ZMQ version >= 4.x)
+ libsodium   | Crypto           | Network communication, cryptography and signaturing library
 
-For the versions used in the release, see [release-process.md](release-process.md) under *Fetch and build inputs*.
+For the versions used, see [dependencies.md](dependencies.md)
 
 Memory Requirements
 --------------------
@@ -65,7 +66,7 @@ Dependency Build Instructions: Ubuntu & Debian
 ----------------------------------------------
 Build requirements:
 
-    sudo apt-get install build-essential libtool autotools-dev automake pkg-config libssl-dev libevent-dev bsdmainutils
+    sudo apt-get install build-essential libtool autotools-dev automake pkg-config libssl-dev libevent-dev bsdmainutils libsodium-dev
 
 Options when installing required Boost library files:
 
@@ -103,16 +104,6 @@ Optional (see --with-miniupnpc and --enable-upnp-default):
 ZMQ dependencies (provides ZMQ API 4.x):
 
     sudo apt-get install libzmq3-dev
-
-Installing libcrypto.so.1.1:
-
-    sudo apt-get install alien
-    wget ftp://rpmfind.net/linux/fedora/linux/development/rawhide/Everything/x86_64/os/Packages/o/openssl-libs-1.1.0f-7.fc27.x86_64.rpm
-    alien openssl-libs-1.1.0f-7.fc27.x86_64.rpm
-    dpkg -i openssl-libs_1.1.0f-8_amd64.deb
-    ln -s /usr/lib64/libcrypto.so.1.1 /usr/lib/libcrypto.so.1.1
-    rm openssl-libs-1.1.0f-7.fc27.x86_64.rpm
-    rm openssl-libs_1.1.0f-8_amd64.deb
 
 Dependencies for the GUI: Ubuntu & Debian
 -----------------------------------------
