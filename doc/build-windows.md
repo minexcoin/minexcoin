@@ -6,6 +6,9 @@ Below are some notes on how to build Bitcoin Core for Windows.
 Most developers use cross-compilation from Ubuntu to build executables for
 Windows. This is also used to build the release binaries.
 
+Currently only building on Ubuntu Trusty 14.04 is supported.
+Other versions are unsupported or known to be broken (e.g. Ubuntu Xenial 16.04).
+
 While there are potentially a number of ways to build on Windows (for example using msys / mingw-w64),
 using the Windows Subsystem For Linux is the most straightforward. If you are building with
 another method, please contribute the instructions here for others who are running versions
@@ -47,6 +50,12 @@ recommended but it is possible to compile the 32-bit version.
 Cross-compilation
 -------------------
 
+Also you can compile code in docker container
+
+How to install docker: https://docs.docker.com/engine/installation
+Docker images repo: https://github.com/minexcoin/minexcoin_docker
+
+
 These steps can be performed on, for example, an Ubuntu VM. The depends system
 will also work on other Linux distributions, however the commands for
 installing the toolchain will be different.
@@ -58,6 +67,8 @@ First, install the general dependencies:
 A host toolchain (`build-essential`) is necessary because some dependency
 packages (such as `protobuf`) need to build host utilities that are used in the
 build process.
+
+See also: [dependencies.md](dependencies.md).
 
 ## Building for 64-bit Windows
 
@@ -74,6 +85,13 @@ Then build using:
     CONFIG_SITE=$PWD/depends/x86_64-w64-mingw32/share/config.site ./configure --prefix=/
     make
 
+On Ubuntu 15.10 and above, if your build fails because the cross-compiler does not seem to support C++11 threads (you get errors such as "httpserver.cpp:69:10: error: ‘mutex’ in namespace ‘std’ does not name a type) you may have to select the posix versions of gcc-mingw-w64 and g++-mingw-w64:
+
+    sudo update-alternatives --config x86_64-w64-mingw32-gcc
+    sudo update-alternatives --config x86_64-w64-mingw32-g++
+
+And select the posix version of the compiler.
+
 ## Building for 32-bit Windows
 
 To build executables for Windows 32-bit, install the following dependencies:
@@ -88,6 +106,14 @@ Then build using:
     ./autogen.sh # not required when building from tarball
     CONFIG_SITE=$PWD/depends/i686-w64-mingw32/share/config.site ./configure --prefix=/
     make
+
+On Ubuntu 15.10 and above, if your build fails because the cross-compiler does not seem to support C++11 threads (you get errors such as "httpserver.cpp:69:10: error: ‘mutex’ in namespace ‘std’ does not name a type) you may have to select the posix versions of gcc-mingw-w64 and g++-mingw-w64:
+
+    sudo update-alternatives --config i686-w64-mingw32-gcc
+    sudo update-alternatives --config i686-w64-mingw32-g++
+
+And select the posix version of the compiler.
+
 
 ## Depends system
 
