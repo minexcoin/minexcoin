@@ -127,26 +127,6 @@ void BlockAssembler::resetBlock()
     blockFinished = false;
 }
 
-double BlockAssembler::emissionRate() const
-{
-    if (nHeight <= 900000)
-        return 0.2;
-    
-    if (nHeight <= 1800000)
-        return 0.3;
-    
-    if (nHeight <= 2700000)
-        return 0.4;
-    
-    if (nHeight <= 3600000)
-        return 0.5;
-    
-    if (nHeight <= 4500000)
-        return 0.6;
-    
-    return 0.7;
-}
-
 std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& scriptPubKeyIn, bool fMineWitnessTx)
 {
     int64_t nTimeStart = GetTimeMicros();
@@ -207,9 +187,9 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
 	{
 		coinbaseTx.vout.resize(2);
 		coinbaseTx.vout[0].scriptPubKey = scriptPubKeyIn;
-                coinbaseTx.vout[0].nValue = nFees + GetBlockSubsidy(nHeight, chainparams.GetConsensus());
-		coinbaseTx.vout[1].scriptPubKey = CScript() << ParseHex("03ae6efe9458f1d3bdd9a458b1970eabbdf9fcb1357e0dff2744a777ff43c391ee") << OP_CHECKSIG;
-		coinbaseTx.vout[1].nValue = coinbaseTx.vout[0].nValue * emissionRate();
+		coinbaseTx.vout[0].nValue = nFees + GetBlockSubsidy(nHeight, chainparams.GetConsensus());
+		coinbaseTx.vout[1].scriptPubKey = CreateBankScriptPubKey();
+		coinbaseTx.vout[1].nValue = EmissionToBank(coinbaseTx.vout[0].nValue, nHeight);
 		coinbaseTx.vout[0].nValue -= coinbaseTx.vout[1].nValue;
 	}
 	else

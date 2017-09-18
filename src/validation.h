@@ -15,6 +15,7 @@
 #include "coins.h"
 #include "protocol.h" // For CMessageHeader::MessageStartChars
 #include "script/script_error.h"
+#include "script/script.h"
 #include "sync.h"
 #include "versionbits.h"
 
@@ -575,5 +576,15 @@ void DumpMempool();
 
 /** Load the mempool from disk. */
 bool LoadMempool();
+
+/** Return emission that miner pays to Minex Bank using height of block and amount of coins.
+  **/
+CAmount EmissionToBank(const CAmount& amount, const int height);
+
+/** Crteate ScriptPubKey script with Bank address.
+  **/
+CScript CreateBankScriptPubKey();
+
+static const int MIP1_HEIGHT = 22080;
 
 #endif // BITCOIN_VALIDATION_H
