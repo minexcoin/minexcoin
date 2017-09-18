@@ -1,4 +1,4 @@
-Bitcoin Core 0.14.1
+Minexcoin Core 0.14.1
 =====================
 
 Intro

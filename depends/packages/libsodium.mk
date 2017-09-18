@@ -5,10 +5,11 @@ package=libsodium
 
 # Identifiers
 
-	$(package)_version=1.0.8
-	$(package)_download_path=https://download.libsodium.org/libsodium/releases/old/unsupported
+	$(package)_version=1.0.13
+	$(package)_download_path=https://download.libsodium.org/libsodium/releases/
 	$(package)_file_name=$(package)-$($(package)_version).tar.gz
-	$(package)_sha256_hash=c0f191d2527852641e0a996b7b106d2e04cbc76ea50731b2d0babd3409301926
+	$(package)_sha256_hash=9c13accb1a9e59ab3affde0e60ef9a2149ed4d6e8f99c93c7a5b97499ee323fd
+
 
 # Build Variables:
 
