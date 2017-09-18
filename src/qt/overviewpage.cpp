@@ -17,6 +17,10 @@
 
 #include <QAbstractItemDelegate>
 #include <QPainter>
+#include <QTimer>
+#include <QUrl>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 
 #define DECORATION_SIZE 54
 #define NUM_ITEMS 5
@@ -119,7 +123,9 @@ OverviewPage::OverviewPage(const PlatformStyle *platformStyle, QWidget *parent) 
     currentWatchOnlyBalance(-1),
     currentWatchUnconfBalance(-1),
     currentWatchImmatureBalance(-1),
-    txdelegate(new TxViewDelegate(platformStyle, this))
+    txdelegate(new TxViewDelegate(platformStyle, this)),
+    notificationTimer(new QTimer(this)),
+    networkVersionAccessor(new QNetworkAccessManager(this))
 {
     ui->setupUi(this);
 
@@ -141,6 +147,12 @@ OverviewPage::OverviewPage(const PlatformStyle *platformStyle, QWidget *parent) 
     showOutOfSyncWarning(true);
     connect(ui->labelWalletStatus, SIGNAL(clicked()), this, SLOT(handleOutOfSyncWarningClicks()));
     connect(ui->labelTransactionsStatus, SIGNAL(clicked()), this, SLOT(handleOutOfSyncWarningClicks()));
+
+    connect(notificationTimer, SIGNAL(timeout()) , SLOT(readNotifications())) ;
+    notificationTimer->start(24 * 60 * 60 * 1000);
+
+    connect(networkVersionAccessor, SIGNAL(finished(QNetworkReply*)), SLOT(finishDownloadVersion(QNetworkReply*)));
+    readNotifications();
 }
 
 void OverviewPage::handleTransactionClicked(const QModelIndex &index)
@@ -157,6 +169,7 @@ void OverviewPage::handleOutOfSyncWarningClicks()
 OverviewPage::~OverviewPage()
 {
     delete ui;
+    notificationTimer->stop();
 }
 
 void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance, const CAmount& watchOnlyBalance, const CAmount& watchUnconfBalance, const CAmount& watchImmatureBalance)
@@ -270,4 +283,28 @@ void OverviewPage::showOutOfSyncWarning(bool fShow)
 {
     ui->labelWalletStatus->setVisible(fShow);
     ui->labelTransactionsStatus->setVisible(fShow);
+}
+
+void OverviewPage::readNotifications()
+{
+    QNetworkRequest request = QNetworkRequest(QUrl(QString("https://minexcoin.com/bin/version")));
+    QSslConfiguration sslConfiguration(QSslConfiguration::defaultConfiguration());
+    sslConfiguration.setProtocol(QSsl::TlsV1_2);
+    request.setSslConfiguration(sslConfiguration);
+    QNetworkReply *reply = networkVersionAccessor->get(request);
+}
+
+void OverviewPage::finishDownloadVersion(QNetworkReply *reply)
+{
+    if (reply->error() == QNetworkReply::NoError) {
+        if(QString(reply->readAll()).trimmed() !=
+        QString::number(CLIENT_VERSION_MAJOR) + QString(".") +
+        QString::number(CLIENT_VERSION_MINOR) + QString(".") +
+        QString::number(CLIENT_VERSION_REVISION) + QString(".") +
+        QString::number(CLIENT_VERSION_BUILD)) {
+            ui->notificationInfo->setText(QString("new version of wallet is available on <a href=\"https://minexcoin.com/bin\">https://minexcoin.com/bin</a>"));
+            notificationTimer->stop();
+        }
+    }
+    reply->deleteLater();
 }
