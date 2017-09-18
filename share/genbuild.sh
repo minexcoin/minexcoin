@@ -30,8 +30,8 @@ if [ -e "$(which git 2>/dev/null)" -a "$(git rev-parse --is-inside-work-tree 2>/
     fi
 
     # otherwise generate suffix from git, i.e. string like "59887e8-dirty"
-    SUFFIX=$(git rev-parse --short HEAD)
-    git diff-index --quiet HEAD -- || SUFFIX="$SUFFIX-dirty"
+    #SUFFIX=$(git rev-parse --short HEAD)
+    #git diff-index --quiet HEAD -- || SUFFIX="$SUFFIX-dirty"
 fi
 
 if [ -n "$DESC" ]; then

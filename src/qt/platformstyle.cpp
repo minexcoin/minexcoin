@@ -138,7 +138,7 @@ const PlatformStyle *PlatformStyle::instantiate(const QString &platformId)
             return new PlatformStyle(
                     platform_styles[x].platformId,
                     platform_styles[x].imagesOnButtons,
-                    platform_styles[x].colorizeIcons,
+                    false,
                     platform_styles[x].useExtraSpacing);
         }
     }

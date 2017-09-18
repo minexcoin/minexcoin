@@ -2184,7 +2184,7 @@
     </message>
     <message>
         <source>Minexcoin Core</source>
-        <translation>Minexcoin Core</translation>
+        <translation>MinexWallet</translation>
     </message>
     <message>
         <source>A fee rate (in %s/kB) that will be used when fee estimation has insufficient data (default: %s)</source>

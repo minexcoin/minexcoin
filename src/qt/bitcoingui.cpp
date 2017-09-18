@@ -125,15 +125,13 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *_platformStyle, const NetworkStyle *
 {
     GUIUtil::restoreWindowGeometry("nWindow", QSize(850, 550), this);
 
-    QString windowTitle = tr(PACKAGE_NAME) + " - ";
+    QString windowTitle = tr(PACKAGE_NAME);
 #ifdef ENABLE_WALLET
     enableWallet = WalletModel::isWalletEnabled();
 #endif // ENABLE_WALLET
-    if(enableWallet)
+    if(!enableWallet)
     {
-        windowTitle += tr("Wallet");
-    } else {
-        windowTitle += tr("Node");
+        windowTitle += tr("-Node");
     }
     windowTitle += " " + networkStyle->getTitleAddText();
 #ifndef Q_OS_MAC
@@ -460,6 +458,12 @@ void BitcoinGUI::createToolBars()
         toolbar->addAction(sendCoinsAction);
         toolbar->addAction(receiveCoinsAction);
         toolbar->addAction(historyAction);
+
+        toolbar->widgetForAction(overviewAction)->setStyleSheet("QWidget {color: #00aeef}");
+        toolbar->widgetForAction(sendCoinsAction)->setStyleSheet("QWidget {color: #00aeef}");
+        toolbar->widgetForAction(receiveCoinsAction)->setStyleSheet("QWidget {color: #00aeef}");
+        toolbar->widgetForAction(historyAction)->setStyleSheet("QWidget {color: #00aeef}");
+
         overviewAction->setChecked(true);
     }
 }

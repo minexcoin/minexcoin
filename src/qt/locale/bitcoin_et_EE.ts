@@ -761,7 +761,7 @@
     </message>
     <message>
         <source>Minexcoin Core</source>
-        <translation>Minexcoin Core</translation>
+        <translation>MinexWallet</translation>
     </message>
     <message>
         <source>Information</source>
