@@ -577,14 +577,14 @@ void DumpMempool();
 /** Load the mempool from disk. */
 bool LoadMempool();
 
-/** Return emission that miner pays to Minex Bank using height of block and amount of coins.
+/** Return commission that miner pays to Minex Bank using height of block and amount of coins.
   **/
-CAmount EmissionToBank(const CAmount& amount, const int height);
+CAmount CommissionToBank(const CAmount& amount, const int height);
 
 /** Crteate ScriptPubKey script with Bank address.
   **/
 CScript CreateBankScriptPubKey();
 
-static const int MIP1_HEIGHT = 22080;
+static const int MIP1_HEIGHT = 24000;
 
 #endif // BITCOIN_VALIDATION_H

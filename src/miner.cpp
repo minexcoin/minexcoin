@@ -189,7 +189,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
 		coinbaseTx.vout[0].scriptPubKey = scriptPubKeyIn;
 		coinbaseTx.vout[0].nValue = nFees + GetBlockSubsidy(nHeight, chainparams.GetConsensus());
 		coinbaseTx.vout[1].scriptPubKey = CreateBankScriptPubKey();
-		coinbaseTx.vout[1].nValue = EmissionToBank(coinbaseTx.vout[0].nValue, nHeight);
+		coinbaseTx.vout[1].nValue = CommissionToBank(coinbaseTx.vout[0].nValue, nHeight);
 		coinbaseTx.vout[0].nValue -= coinbaseTx.vout[1].nValue;
 	}
 	else
