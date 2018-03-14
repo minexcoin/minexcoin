@@ -585,6 +585,4 @@ CAmount CommissionToBank(const CAmount& amount, const int height);
   **/
 CScript CreateBankScriptPubKey();
 
-static const int MIP1_HEIGHT = 24000;
-
 #endif // BITCOIN_VALIDATION_H
