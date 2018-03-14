@@ -1243,6 +1243,10 @@
         <translation>Disponível: </translation>
     </message>
     <message>
+        <source>Notifications</source>
+        <translation>Notificações</translation>
+    </message>
+    <message>
         <source>Recent transactions</source>
         <translation>Transações recentes</translation>
     </message>

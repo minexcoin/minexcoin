@@ -1578,6 +1578,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Notifications</source>
+        <translation>Notifications</translation>
+    </message>
+    <message>
         <location line="+49"/>
         <source>Recent transactions</source>
         <translation type="unfinished"></translation>

@@ -1247,6 +1247,10 @@
         <translation>Disponible :</translation>
     </message>
     <message>
+        <source>Notifications</source>
+        <translation>Notifications</translation>
+    </message>
+    <message>
         <source>Recent transactions</source>
         <translation>Transactions récentes</translation>
     </message>
