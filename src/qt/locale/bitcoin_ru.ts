@@ -1247,6 +1247,10 @@
         <translation>Доступно:</translation>
     </message>
     <message>
+        <source>Notifications</source>
+        <translation>Уведомления</translation>
+    </message>
+    <message>
         <source>Recent transactions</source>
         <translation>Последние транзакции</translation>
     </message>

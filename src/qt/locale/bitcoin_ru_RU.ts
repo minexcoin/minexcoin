@@ -77,6 +77,10 @@
         <source>Information</source>
         <translation>Информация</translation>
     </message>
+    <message>
+        <source>Notifications</source>
+        <translation>Уведомления</translation>
+    </message>
     </context>
 <context>
     <name>CoinControlDialog</name>

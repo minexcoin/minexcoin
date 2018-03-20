@@ -15,8 +15,12 @@
 #include "transactiontablemodel.h"
 #include "walletmodel.h"
 
+#include <algorithm>
+#include <vector>
+
 #include <QAbstractItemDelegate>
 #include <QPainter>
+#include <QtGlobal>
 #include <QTimer>
 #include <QUrl>
 #include <QNetworkRequest>
@@ -24,6 +28,37 @@
 
 #define DECORATION_SIZE 54
 #define NUM_ITEMS 5
+
+namespace {
+
+bool isNewerVersionThanThis(const QByteArray &version)
+{
+    const auto thisVersionNumbers = {
+        unsigned(CLIENT_VERSION_MAJOR),
+        unsigned(CLIENT_VERSION_MINOR),
+        unsigned(CLIENT_VERSION_REVISION)
+    };
+    QList<QByteArray> versionList = version.trimmed().split('.');
+    const int usefulSize = std::min(versionList.size(), static_cast<int>(thisVersionNumbers.size()));
+    versionList.erase(versionList.begin() + usefulSize, versionList.end());
+
+    std::vector<unsigned> versionNumbers;
+    versionNumbers.reserve(versionList.size());
+    for (const QByteArray &versionListElement : versionList) {
+        bool ok = true;
+        versionNumbers.push_back(versionListElement.toUInt(&ok));
+        if (!ok) {
+            qWarning() << "Invalid version file on the server";
+            return false;
+        }
+    }
+    return std::lexicographical_compare(
+        thisVersionNumbers.begin(), thisVersionNumbers.end(),
+        versionNumbers.begin(), versionNumbers.end()
+    );
+}
+
+} // Anonymous namespace
 
 class TxViewDelegate : public QAbstractItemDelegate
 {
@@ -296,15 +331,10 @@ void OverviewPage::readNotifications()
 
 void OverviewPage::finishDownloadVersion(QNetworkReply *reply)
 {
-    if (reply->error() == QNetworkReply::NoError) {
-        if(QString(reply->readAll()).trimmed() !=
-        QString::number(CLIENT_VERSION_MAJOR) + QString(".") +
-        QString::number(CLIENT_VERSION_MINOR) + QString(".") +
-        QString::number(CLIENT_VERSION_REVISION) + QString(".") +
-        QString::number(CLIENT_VERSION_BUILD)) {
-            ui->notificationInfo->setText(QString("new version of wallet is available on <a href=\"https://minexcoin.com/bin\">https://minexcoin.com/bin</a>"));
-            notificationTimer->stop();
-        }
+    if (reply->error() == QNetworkReply::NoError
+            && isNewerVersionThanThis(reply->readAll())) {
+        ui->notificationInfo->setText(tr("new version of wallet is available on").append(QLatin1String(" <a href=\"https://minexcoin.com/bin\">https://minexcoin.com/bin</a>")));
+        notificationTimer->stop();
     }
     reply->deleteLater();
 }

@@ -1247,6 +1247,10 @@
         <translation>Gastable:</translation>
     </message>
     <message>
+        <source>Notifications</source>
+        <translation>Notificaciones</translation>
+    </message>
+    <message>
         <source>Recent transactions</source>
         <translation>Transacciones recientes</translation>
     </message>

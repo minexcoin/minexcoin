@@ -1108,6 +1108,10 @@ Per specificare più URL separarli con una barra verticale "|".</translation>
         <translation>Spendibile:</translation>
     </message>
     <message>
+        <source>Notifications</source>
+        <translation>Notifiche</translation>
+    </message>
+    <message>
         <source>Recent transactions</source>
         <translation>Transazioni recenti</translation>
     </message>
