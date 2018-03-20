@@ -72,10 +72,12 @@ public:
     CMainParams() {
         strNetworkID = "main";
         consensus.nSubsidyHalvingInterval = 210000; //Don't used in Minexcoin
+        consensus.MIP1Height = 24000;
+        consensus.MIP2Height = -1;
         consensus.BIP34Height = 0;
         consensus.BIP34Hash = uint256S("0x0000000000000000000000000000000000000000000000000000000000000000");
-        consensus.BIP65Height = 0; // 000000000000000004c2b624ed5d7756c508d90fd0da2c7c679febfa6c4735f0
-        consensus.BIP66Height = 0; // 00000000000000000379eaa19dce8c9b722d46ae6a57c2f1a988119488b50931
+        consensus.BIP65Height = 0;
+        consensus.BIP66Height = 0;
         consensus.powLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.nPowTargetTimespan = 2 * 24 * 60 * 60; // two days
         consensus.nPowTargetSpacing = 3 * 60; // three minutes
@@ -89,13 +91,13 @@ public:
 
         // Deployment of BIP68, BIP112, and BIP113.
         consensus.vDeployments[Consensus::DEPLOYMENT_CSV].bit = 0;
-        consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nStartTime = 0; // May 1st, 2016
-        consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nTimeout = 0; // May 1st, 2017
+        consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nStartTime = 0;
+        consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nTimeout = 0;
 
         // Deployment of SegWit (BIP141, BIP143, and BIP147)
         consensus.vDeployments[Consensus::DEPLOYMENT_SEGWIT].bit = 1;
-        consensus.vDeployments[Consensus::DEPLOYMENT_SEGWIT].nStartTime = 0; // November 15th, 2016.
-        consensus.vDeployments[Consensus::DEPLOYMENT_SEGWIT].nTimeout = 0; // November 15th, 2017.
+        consensus.vDeployments[Consensus::DEPLOYMENT_SEGWIT].nStartTime = 0;
+        consensus.vDeployments[Consensus::DEPLOYMENT_SEGWIT].nTimeout = 0;
 
         // The best chain should have at least this much work.
         consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000000000000000001");
@@ -285,34 +287,36 @@ class CTestNetParams : public CChainParams {
 public:
     CTestNetParams() {
         strNetworkID = "test";
-        consensus.nSubsidyHalvingInterval = 210000;
+        consensus.nSubsidyHalvingInterval = 210000; //Don't used in Minexcoin
+        consensus.MIP1Height = 2;
+        consensus.MIP2Height = 0;
         consensus.BIP34Height = 21111;
-        consensus.BIP34Hash = uint256S("0x0000000023b3a96d3484e5abb3755c413e7d41500f8e2a5c3f0dd01299cd8ef8");
-        consensus.BIP65Height = 581885; // 00000000007f6655f22f98e72ed80d8b06dc761d5da09df0fa1dc4be4f861eb6
-        consensus.BIP66Height = 330776; // 000000002104c8c45e99a8853285a3b592602a3ccde2b832481da85e9e4ba182
-        consensus.powLimit = uint256S("00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-        consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
-        consensus.nPowTargetSpacing = 10 * 60;
+        consensus.BIP34Hash = uint256S("0x0000000000000000000000000000000000000000000000000000000000000000");
+        consensus.BIP65Height = 0; // 00000000007f6655f22f98e72ed80d8b06dc761d5da09df0fa1dc4be4f861eb6
+        consensus.BIP66Height = 0; // 000000002104c8c45e99a8853285a3b592602a3ccde2b832481da85e9e4ba182
+        consensus.powLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+        consensus.nPowTargetTimespan = 2 * 24 * 60 * 60; // two days
+        consensus.nPowTargetSpacing = 3 * 60; // three minutes
         consensus.fPowAllowMinDifficultyBlocks = true;
-        consensus.fPowNoRetargeting = false;
-        consensus.nRuleChangeActivationThreshold = 1512; // 75% for testchains
-        consensus.nMinerConfirmationWindow = 2016; // nPowTargetTimespan / nPowTargetSpacing
+        consensus.fPowNoRetargeting = true;
+        consensus.nMinerConfirmationWindow = consensus.nPowTargetTimespan / consensus.nPowTargetSpacing;
+        consensus.nRuleChangeActivationThreshold = std::ceil(consensus.nMinerConfirmationWindow * 0.75); // 75% of nMinerConfirmationWindow
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601; // January 1, 2008
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
 
         // Deployment of BIP68, BIP112, and BIP113.
         consensus.vDeployments[Consensus::DEPLOYMENT_CSV].bit = 0;
-        consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nStartTime = 1456790400; // March 1st, 2016
-        consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nTimeout = 1493596800; // May 1st, 2017
+        consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nStartTime = 0;
+        consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nTimeout = 0;
 
         // Deployment of SegWit (BIP141, BIP143, and BIP147)
         consensus.vDeployments[Consensus::DEPLOYMENT_SEGWIT].bit = 1;
-        consensus.vDeployments[Consensus::DEPLOYMENT_SEGWIT].nStartTime = 0; // May 1st 2016
-        consensus.vDeployments[Consensus::DEPLOYMENT_SEGWIT].nTimeout = 0; // May 1st 2017
+        consensus.vDeployments[Consensus::DEPLOYMENT_SEGWIT].nStartTime = 0;
+        consensus.vDeployments[Consensus::DEPLOYMENT_SEGWIT].nTimeout = 0;
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000000000000000bf0");
+        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000000000000000001");
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x00000000000128796ee387cf110ccb9d2f36cffaf7f73079c995377c65ac0dcc"); //1079274
@@ -321,26 +325,136 @@ public:
         pchMessageStart[1] = 0x4a;
         pchMessageStart[2] = 0x4c;
         pchMessageStart[3] = 0x54;
-        nDefaultPort = 18333;
+        nDefaultPort = 8336;
         nPruneAfterHeight = 1000;
         const size_t N = 96, K = 5;
         nEquihashN = N;
         nEquihashK = K;
 
-	genesis = CreateGenesisBlock(1500508801, uint256S("0x0000000000000000000000000000000000000000003f94d1ad391682fe038bfd"),
+        genesis = CreateGenesisBlock(1520955809, uint256S("0x0000000000000000000000000000000000000000003f94d1ad391682fe038bfd"),
             0x207fffff, 1, 50 * COIN);
 
-        genesis.nSolution = ParseHex("01dae2d39764d434a275f65c09fc9300450660c8a85d48f00e31a61235ccfc795fd1198c4893743b3c0c11dacc0b80e71aac60307e499aaa74b997d60e4edc12a3d3c240");
+        genesis.nSolution = ParseHex("00f9494486bb0e1d03951320ab82f9eead1559a4e408a02f97467a0ce3aeaec3ff701c8db53120df398e53727e36a0e189c3ec409b28c79bf75bc2c4181a4b395b8d3d2e");
+        
+        /* printf("Searching for genesis block...\n");
+        // This will figure out a valid hash and Nonce if you're
+        // creating a different genesis block:
+        arith_uint256 hashTarget = hashTarget.SetCompact(genesis.nBits);
+        printf("hashTarget = %s\n", hashTarget.ToString().c_str());
+        arith_uint256 thash;
+
+        while(true)
+        {
+            crypto_generichash_blake2b_state state;
+            std::mutex m_cs;
+            bool cancelSolver = false;
+            std::string solver = GetArg("-equihashsolver", "default");
+            EhInitialiseState(nEquihashN, nEquihashK, state);
+
+            // I = the block header minus nonce and solution.
+            CEquihashInput I{genesis};
+            CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
+            ss << I;
+
+            // H(I||...
+            crypto_generichash_blake2b_update(&state, (unsigned char*)&ss[0], ss.size());
+
+            // H(I||V||...
+            crypto_generichash_blake2b_state curr_state;
+            curr_state = state;
+            crypto_generichash_blake2b_update(&curr_state,
+                                        genesis.nNonce.begin(),
+                                        genesis.nNonce.size());
+            std::function<bool(std::vector<unsigned char>)> validBlock =
+                [&hashTarget, &m_cs, &cancelSolver, this]
+                    (std::vector<unsigned char> soln) {
+                        // Write the solution to the hash and compute the result.
+                        // printf("- Checking solution against target\n");
+                        genesis.nSolution = soln;
+
+                        if (UintToArith256(genesis.GetHash()) > hashTarget) {
+                            return false;
+                        }
+
+                        if (!CheckEquihashSolution(&genesis, *this)) {
+                            return false;
+                        }
+
+                        // Found a solution
+                        // Ignore chain updates caused by us
+                        std::lock_guard<std::mutex> lock{m_cs};
+                        cancelSolver = false;
+                        return true;
+            };
+            std::function<bool(EhSolverCancelCheck)> cancelled = [&m_cs, &cancelSolver](EhSolverCancelCheck pos) {
+                std::lock_guard<std::mutex> lock{m_cs};
+                return cancelSolver;
+            };
+            if (solver == "tromp") {
+                // Create solver and initialize it.
+                equi eq(1);
+                eq.setstate(&curr_state);
+
+                // Intialization done, start algo driver.
+                eq.digit0(0);
+                eq.xfull = eq.bfull = eq.hfull = 0;
+                eq.showbsizes(0);
+                for (u32 r = 1; r < WK; r++) {
+                    (r&1) ? eq.digitodd(r, 0) : eq.digiteven(r, 0);
+                    eq.xfull = eq.bfull = eq.hfull = 0;
+                    eq.showbsizes(r);
+                }
+                eq.digitK(0);
+
+                // Convert solution indices to byte array (decompress) and pass it to validBlock method.
+                bool ready = false;
+                for (size_t s = 0; s < eq.nsols; s++) {
+                    // printf("\rChecking solution %d", int(s+1));
+                    std::vector<eh_index> index_vector(PROOFSIZE);
+                    for (size_t i = 0; i < PROOFSIZE; i++) {
+                        index_vector[i] = eq.sols[s][i];
+                    }
+                    std::vector<unsigned char> sol_char = GetMinimalFromIndices(index_vector, DIGITBITS);
+
+                    if (validBlock(sol_char)) {
+                        // If we find a POW solution, do not try other solutions
+                        // because they become invalid as we created a new block in blockchain.
+                        ready = true;
+                        break;
+                    }
+                }
+                if (ready) break;
+            } else {
+                try {
+                    // If we find a valid block, we rebuild
+                    bool found = EhOptimisedSolve(nEquihashN, nEquihashK, curr_state, validBlock, cancelled);
+                    if (found) {
+                        break;
+                    }
+                } catch (EhSolverCancelledException&) {
+                    printf("Equihash solver cancelled\n");
+                    std::lock_guard<std::mutex> lock{m_cs};
+                    cancelSolver = false;
+                }
+            }
+
+            genesis.nNonce = ArithToUint256(UintToArith256(genesis.nNonce) + 1);
+        }
+
+        printf("block.nTime = %u \n", genesis.nTime);
+        printf("block.nNonce = %s \n", genesis.nNonce.ToString().c_str());
+        printf("block.GetHash = %s\n", genesis.GetHash().ToString().c_str());
+        printf("block.hashMerkleRoot = %s\n", genesis.hashMerkleRoot.ToString().c_str());
+        printf("block.nSolution = %s\n", HexStr(genesis.nSolution.begin(), genesis.nSolution.end()).c_str());// */
+
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("490a36d9451a55ed197e34aca7414b35d775baa4a8e896f1c577f65ce2d214cb"));
+        assert(consensus.hashGenesisBlock == uint256S("6ef2e897f7acb347086f9860b2ad401f133fe1b103f77de771aac7b5e88cfe70"));
         assert(genesis.hashMerkleRoot == uint256S("0x0516e9e037b01d085c49c4957801c909432cdbfc1facc0b0ff25de0d7bd2b8a8"));
         vFixedSeeds.clear();
         vSeeds.clear();
         // nodes with support for servicebits filtering should be at the top
-        vSeeds.push_back(CDNSSeedData("testnetbitcoin.jonasschnelli.ch", "testnet-seed.bitcoin.jonasschnelli.ch", true));
-        vSeeds.push_back(CDNSSeedData("petertodd.org", "seed.tbtc.petertodd.org", true));
-        vSeeds.push_back(CDNSSeedData("bluematt.me", "testnet-seed.bluematt.me"));
-        vSeeds.push_back(CDNSSeedData("bitcoin.schildbach.de", "testnet-seed.bitcoin.schildbach.de"));
+        vSeeds.push_back(CDNSSeedData("138.197.90.246", "138.197.90.246"));
+        vSeeds.push_back(CDNSSeedData("139.59.154.41", "139.59.154.41"));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,111);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,196);
@@ -375,7 +489,9 @@ class CRegTestParams : public CChainParams {
 public:
     CRegTestParams() {
         strNetworkID = "regtest";
-        consensus.nSubsidyHalvingInterval = 150;
+        consensus.nSubsidyHalvingInterval = 210000; //Don't used in Minexcoin
+        consensus.MIP1Height = 2;
+        consensus.MIP2Height = -1;
         consensus.BIP34Height = 100000000; // BIP34 has not activated on regtest (far in the future so block v1 are not rejected in tests)
         consensus.BIP34Hash = uint256();
         consensus.BIP65Height = 1351; // BIP65 activated on regtest (Used in rpc activation tests)
