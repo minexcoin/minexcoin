@@ -22,6 +22,8 @@
 #include <boost/signals2/signal.hpp>
 #include <boost/thread.hpp>
 #include <boost/algorithm/string/case_conv.hpp> // for to_upper()
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
 
 #include <memory> // for unique_ptr
 #include <unordered_map>
@@ -260,11 +262,11 @@ UniValue stop(const JSONRPCRequest& jsonRequest)
     if (jsonRequest.fHelp || jsonRequest.params.size() > 1)
         throw runtime_error(
             "stop\n"
-            "\nStop Bitcoin server.");
+            "\nStop Minexcoin server.");
     // Event loop will exit after current HTTP requests have been handled, so
     // this reply will get back to the client.
     StartShutdown();
-    return "Bitcoin server stopping";
+    return "Minexcoin server stopping";
 }
 
 /**
@@ -442,8 +444,16 @@ static inline JSONRPCRequest transformNamedArguments(const JSONRPCRequest& in, c
     }
     // Process expected parameters.
     int hole = 0;
-    for (const std::string &argName: argNames) {
-        auto fr = argsIn.find(argName);
+    for (const std::string &argNamePattern: argNames) {
+        std::vector<std::string> vargNames;
+        boost::algorithm::split(vargNames, argNamePattern, boost::algorithm::is_any_of("|"));
+        auto fr = argsIn.end();
+        for (const std::string & argName : vargNames) {
+            fr = argsIn.find(argName);
+            if (fr != argsIn.end()) {
+                break;
+            }
+        }
         if (fr != argsIn.end()) {
             for (int i = 0; i < hole; ++i) {
                 // Fill hole between specified parameters with JSON nulls,
