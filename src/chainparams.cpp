@@ -100,10 +100,10 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_SEGWIT].nTimeout = 0;
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000000000000000001");
+        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000001f4652da8c6b4");
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("0x00000000000000000013176bf8d7dfeab4e1db31dc93bc311b436e82ab226b90"); //453354
+        consensus.defaultAssumeValid = uint256S("0x000000001d26827155dedd004020740a0a73aee7a6694c0d4ff6d6ef8c9bb819"); //109800
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -270,9 +270,9 @@ public:
         fMineBlocksOnDemand = false;
 
         checkpointData = (CCheckpointData) {
-        	boost::assign::map_list_of
-            ( 0, uint256S("0x"))
-	};
+            boost::assign::map_list_of
+            (110000, uint256S("0x000000b76be158ed71ca2b3c035b0d041285e3f7961d8fd05c15d266ded3284a"))
+        };
 
         chainTxData = ChainTxData{
         };
