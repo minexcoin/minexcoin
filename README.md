@@ -28,4 +28,4 @@ completely stable.
 Binaries
 -------------------
 
-Linux binary file: http://minexcoin.com/bin/linux/minexcoin-qt
+Linux binary file: http://minexcoin.com/bin/
