@@ -1,0 +1,29 @@
+FROM ubuntu:16.04 as build
+RUN apt update
+RUN apt --yes install software-properties-common
+RUN add-apt-repository ppa:bitcoin/bitcoin
+RUN apt update
+
+RUN apt --yes install build-essential libtool autotools-dev automake pkg-config \
+ libssl-dev libevent-dev autoconf curl bsdmainutils \
+ g++-mingw-w64-x86-64 mingw-w64-x86-64-dev
+
+RUN printf "1\n" | update-alternatives --config x86_64-w64-mingw32-gcc
+RUN printf "1\n" | update-alternatives --config x86_64-w64-mingw32-g++
+
+WORKDIR /build
+COPY . .
+
+RUN cd depends \
+  && make HOST=x86_64-w64-mingw32 -j `nproc --all` \
+  && cd /build \
+  && ./autogen.sh \
+  && CONFIG_SITE=$PWD/depends/x86_64-w64-mingw32/share/config.site ./configure --prefix=/ \
+  && make all -j `nproc --all`
+
+FROM ubuntu:16.04
+WORKDIR /minexcoin
+COPY --from=build /build/src/minexcoin-cli.exe /minexcoin/minexcoin-cli.exe
+COPY --from=build /build/src/minexcoin-tx.exe /minexcoin/minexcoin-tx.exe
+COPY --from=build /build/src/minexcoind.exe /minexcoin/minexcoind.exe
+COPY --from=build /build/src/qt/minexcoin-qt.exe /minexcoin/minexcoin-qt.exe

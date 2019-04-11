@@ -1,0 +1,24 @@
+FROM ubuntu:16.04 as build
+RUN apt update
+RUN apt --yes install software-properties-common
+RUN add-apt-repository ppa:bitcoin/bitcoin
+RUN apt update
+
+RUN apt --yes install build-essential libtool autotools-dev automake pkg-config libssl-dev libevent-dev autoconf curl bsdmainutils
+
+WORKDIR /build
+COPY . .
+
+RUN cd depends \
+  && make HOST=x86_64-pc-linux-gnu -j `nproc --all` \
+  && cd /build \
+  && ./autogen.sh \
+  && CONFIG_SITE=$PWD/depends/x86_64-pc-linux-gnu/share/config.site ./configure --prefix=/ \
+  && make all -j `nproc --all`
+
+FROM ubuntu:16.04
+WORKDIR /minexcoin
+COPY --from=build /build/src/minexcoin-cli /minexcoin/minexcoin-cli
+COPY --from=build /build/src/minexcoin-tx /minexcoin/minexcoin-tx
+COPY --from=build /build/src/minexcoind /minexcoin/minexcoind
+COPY --from=build /build/src/qt/minexcoin-qt /minexcoin/minexcoin-qt
