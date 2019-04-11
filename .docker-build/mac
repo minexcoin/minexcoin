@@ -1,0 +1,29 @@
+FROM ubuntu:16.04 as build
+RUN apt update
+RUN apt --yes install software-properties-common
+RUN add-apt-repository ppa:bitcoin/bitcoin
+RUN apt update
+
+RUN apt --yes install build-essential libtool autotools-dev automake pkg-config \
+ libssl-dev libevent-dev bsdmainutils python3 cmake imagemagick libcap-dev \
+ librsvg2-bin libz-dev libbz2-dev libtiff-tools python-dev python-setuptools \
+ autoconf curl ccache
+
+WORKDIR /build
+COPY . .
+
+RUN cd depends \
+  && mkdir /build/depends/SDKs/ \
+  && mkdir /build/depends/sdk-sources/ \
+  && curl --location --fail https://bitcoincore.org/depends-sources/sdks/MacOSX10.11.sdk.tar.gz -o /build/depends/sdk-sources/MacOSX10.11.sdk.tar.gz \
+  && tar -C /build/depends/SDKs -xf /build/depends/sdk-sources/MacOSX10.11.sdk.tar.gz \
+  && make HOST=x86_64-apple-darwin11 -j `nproc --all` \
+  && cd /build \
+  && ./autogen.sh \
+  && CONFIG_SITE=$PWD/depends/x86_64-apple-darwin11/share/config.site ./configure --prefix=/ \
+  && make all -j `nproc --all` \
+  && make deploy
+
+FROM ubuntu:16.04
+WORKDIR /minexcoin
+COPY --from=build /build/Minexcoin-Qt.app /minexcoin/Minexcoin-Qt.app

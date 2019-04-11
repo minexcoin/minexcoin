@@ -242,19 +242,11 @@ public:
         assert(consensus.hashGenesisBlock == uint256S("490a36d9451a55ed197e34aca7414b35d775baa4a8e896f1c577f65ce2d214cb"));
         assert(genesis.hashMerkleRoot == uint256S("0x0516e9e037b01d085c49c4957801c909432cdbfc1facc0b0ff25de0d7bd2b8a8"));
         
-        vSeeds.push_back(CDNSSeedData("138.197.73.48", "138.197.73.48"));
-        vSeeds.push_back(CDNSSeedData("138.197.73.123", "138.197.73.123"));
-        vSeeds.push_back(CDNSSeedData("159.203.70.193", "159.203.70.193"));
-        vSeeds.push_back(CDNSSeedData("88.198.33.35", "88.198.33.35"));
-        vSeeds.push_back(CDNSSeedData("95.85.35.152", "95.85.35.152"));
-        vSeeds.push_back(CDNSSeedData("78.46.93.126", "78.46.93.126"));
-        vSeeds.push_back(CDNSSeedData("91.233.111.28", "91.233.111.28"));
-         // Note that of those with the service bits flag, most only support a subset of possible options
-        // vSeeds.push_back(CDNSSeedData("bitcoin.sipa.be", "seed.bitcoin.sipa.be", true)); // Pieter Wuille, only supports x1, x5, x9, and xd
-        // vSeeds.push_back(CDNSSeedData("bluematt.me", "dnsseed.bluematt.me", true)); // Matt Corallo, only supports x9
-        // vSeeds.push_back(CDNSSeedData("dashjr.org", "dnsseed.bitcoin.dashjr.org")); // Luke Dashjr
-        // vSeeds.push_back(CDNSSeedData("bitcoinstats.com", "seed.bitcoinstats.com", true)); // Christian Decker, supports x1 - xf
-        // vSeeds.push_back(CDNSSeedData("bitcoin.jonasschnelli.ch", "seed.bitcoin.jonasschnelli.ch", true)); // Jonas Schnelli, only supports x1, x5, x9, and xd
+        vSeeds.push_back(CDNSSeedData("mainnet-01.minexcoin.com", "mainnet-01.minexcoin.com"));
+        vSeeds.push_back(CDNSSeedData("mainnet-02.minexcoin.com", "mainnet-02.minexcoin.com"));
+        vSeeds.push_back(CDNSSeedData("mainnet-03.minexcoin.com", "mainnet-03.minexcoin.com"));
+        vSeeds.push_back(CDNSSeedData("mainnet-04.minexcoin.com", "mainnet-04.minexcoin.com"));
+        vSeeds.push_back(CDNSSeedData("mainnet-05.minexcoin.com", "mainnet-05.minexcoin.com"));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,75);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,5);
@@ -336,125 +328,14 @@ public:
 
         genesis.nSolution = ParseHex("00f9494486bb0e1d03951320ab82f9eead1559a4e408a02f97467a0ce3aeaec3ff701c8db53120df398e53727e36a0e189c3ec409b28c79bf75bc2c4181a4b395b8d3d2e");
         
-        /* printf("Searching for genesis block...\n");
-        // This will figure out a valid hash and Nonce if you're
-        // creating a different genesis block:
-        arith_uint256 hashTarget = hashTarget.SetCompact(genesis.nBits);
-        printf("hashTarget = %s\n", hashTarget.ToString().c_str());
-        arith_uint256 thash;
-
-        while(true)
-        {
-            crypto_generichash_blake2b_state state;
-            std::mutex m_cs;
-            bool cancelSolver = false;
-            std::string solver = GetArg("-equihashsolver", "default");
-            EhInitialiseState(nEquihashN, nEquihashK, state);
-
-            // I = the block header minus nonce and solution.
-            CEquihashInput I{genesis};
-            CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
-            ss << I;
-
-            // H(I||...
-            crypto_generichash_blake2b_update(&state, (unsigned char*)&ss[0], ss.size());
-
-            // H(I||V||...
-            crypto_generichash_blake2b_state curr_state;
-            curr_state = state;
-            crypto_generichash_blake2b_update(&curr_state,
-                                        genesis.nNonce.begin(),
-                                        genesis.nNonce.size());
-            std::function<bool(std::vector<unsigned char>)> validBlock =
-                [&hashTarget, &m_cs, &cancelSolver, this]
-                    (std::vector<unsigned char> soln) {
-                        // Write the solution to the hash and compute the result.
-                        // printf("- Checking solution against target\n");
-                        genesis.nSolution = soln;
-
-                        if (UintToArith256(genesis.GetHash()) > hashTarget) {
-                            return false;
-                        }
-
-                        if (!CheckEquihashSolution(&genesis, *this)) {
-                            return false;
-                        }
-
-                        // Found a solution
-                        // Ignore chain updates caused by us
-                        std::lock_guard<std::mutex> lock{m_cs};
-                        cancelSolver = false;
-                        return true;
-            };
-            std::function<bool(EhSolverCancelCheck)> cancelled = [&m_cs, &cancelSolver](EhSolverCancelCheck pos) {
-                std::lock_guard<std::mutex> lock{m_cs};
-                return cancelSolver;
-            };
-            if (solver == "tromp") {
-                // Create solver and initialize it.
-                equi eq(1);
-                eq.setstate(&curr_state);
-
-                // Intialization done, start algo driver.
-                eq.digit0(0);
-                eq.xfull = eq.bfull = eq.hfull = 0;
-                eq.showbsizes(0);
-                for (u32 r = 1; r < WK; r++) {
-                    (r&1) ? eq.digitodd(r, 0) : eq.digiteven(r, 0);
-                    eq.xfull = eq.bfull = eq.hfull = 0;
-                    eq.showbsizes(r);
-                }
-                eq.digitK(0);
-
-                // Convert solution indices to byte array (decompress) and pass it to validBlock method.
-                bool ready = false;
-                for (size_t s = 0; s < eq.nsols; s++) {
-                    // printf("\rChecking solution %d", int(s+1));
-                    std::vector<eh_index> index_vector(PROOFSIZE);
-                    for (size_t i = 0; i < PROOFSIZE; i++) {
-                        index_vector[i] = eq.sols[s][i];
-                    }
-                    std::vector<unsigned char> sol_char = GetMinimalFromIndices(index_vector, DIGITBITS);
-
-                    if (validBlock(sol_char)) {
-                        // If we find a POW solution, do not try other solutions
-                        // because they become invalid as we created a new block in blockchain.
-                        ready = true;
-                        break;
-                    }
-                }
-                if (ready) break;
-            } else {
-                try {
-                    // If we find a valid block, we rebuild
-                    bool found = EhOptimisedSolve(nEquihashN, nEquihashK, curr_state, validBlock, cancelled);
-                    if (found) {
-                        break;
-                    }
-                } catch (EhSolverCancelledException&) {
-                    printf("Equihash solver cancelled\n");
-                    std::lock_guard<std::mutex> lock{m_cs};
-                    cancelSolver = false;
-                }
-            }
-
-            genesis.nNonce = ArithToUint256(UintToArith256(genesis.nNonce) + 1);
-        }
-
-        printf("block.nTime = %u \n", genesis.nTime);
-        printf("block.nNonce = %s \n", genesis.nNonce.ToString().c_str());
-        printf("block.GetHash = %s\n", genesis.GetHash().ToString().c_str());
-        printf("block.hashMerkleRoot = %s\n", genesis.hashMerkleRoot.ToString().c_str());
-        printf("block.nSolution = %s\n", HexStr(genesis.nSolution.begin(), genesis.nSolution.end()).c_str());// */
-
         consensus.hashGenesisBlock = genesis.GetHash();
         assert(consensus.hashGenesisBlock == uint256S("6ef2e897f7acb347086f9860b2ad401f133fe1b103f77de771aac7b5e88cfe70"));
         assert(genesis.hashMerkleRoot == uint256S("0x0516e9e037b01d085c49c4957801c909432cdbfc1facc0b0ff25de0d7bd2b8a8"));
         vFixedSeeds.clear();
         vSeeds.clear();
-        // nodes with support for servicebits filtering should be at the top
-        vSeeds.push_back(CDNSSeedData("138.197.90.246", "138.197.90.246"));
-        vSeeds.push_back(CDNSSeedData("139.59.154.41", "139.59.154.41"));
+
+        vSeeds.push_back(CDNSSeedData("testnet-01.minexcoin.com", "testnet-01.minexcoin.com"));
+        vSeeds.push_back(CDNSSeedData("testnet-02.minexcoin.com", "testnet-02.minexcoin.com"));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,111);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,196);

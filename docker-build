@@ -1,0 +1,10 @@
+docker build . -f .docker-build/linux -t minexcoin-build-linux
+docker build . -f .docker-build/mac -t minexcoin-build-mac
+docker build . -f .docker-build/win32 -t minexcoin-build-win32
+docker build . -f .docker-build/win64 -t minexcoin-build-win64
+
+mkdir $(pwd)/release
+docker run -v $(pwd)/release:/release minexcoin-build-linux bash -c "tar -cvf /release/minexcoin-v1.3.2-x86_64-pc-linux-gnu.tar.gz *"
+docker run -v $(pwd)/release:/release minexcoin-build-mac bash -c "tar -cvf /release/minexcoin-v1.3.2-x86_64-apple-darwin11.tar.gz *"
+docker run -v $(pwd)/release:/release minexcoin-build-win32 bash -c "tar -cvf /release/minexcoin-v1.3.2-i686-w64-mingw32.tar.gz *"
+docker run -v $(pwd)/release:/release minexcoin-build-win64 bash -c "tar -cvf /release/minexcoin-v1.3.2-x86_64-w64-mingw32.tar.gz *"
